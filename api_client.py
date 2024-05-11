@@ -1,11 +1,13 @@
+# api_client.py
 import requests
 from .credentials import Credentials
 from .tokens import TokenManager
-from .api_utilities import DateTimeConverter, ParameterParser
+from .api_utilities import ParameterParser
+from .config import API_BASE_URL
 
 class APIClient:
     def __init__(self):
-        self.base_url = 'https://api.schwabapi.com'
+        self.base_url = API_BASE_URL
         self.session = requests.Session()
         self.setup_session()
 
