@@ -1,0 +1,4 @@
+
+requests>=2.25.1
+python-dotenv>=0.19.1
+websockets>=10.3
