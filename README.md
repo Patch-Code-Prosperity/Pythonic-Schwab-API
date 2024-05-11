@@ -16,11 +16,11 @@ For community support and discussions, join our [Pythonic Schwab API Discord gro
 6. **Run the Program**: Start by executing `main.py`.
 
 ## Capabilities
-- **API Authentication**: Utilizes OAuth for secure access (`schwab-api.initialize()`).
-- **Comprehensive API Function Coverage**: Includes ready-to-use functions for all API endpoints (`schwab-api.perform_request()`).
-- **Automatic Token Management**: Handles access token renewals (`schwab-api.update_tokens_automatically()`).
-- **Real-Time Data Streaming**: Facilitates streaming via websockets (`schwab-api.stream.start_manual()`).
-- **Automated Stream Management**: Automates the start and stop of data streams (`schwab-api.stream.start_automatically()`).
+- **API Authentication**: Utilizes OAuth for secure access `schwab-api.initialize()`.
+- **Comprehensive API Function Coverage**: Includes ready-to-use functions for all API endpoints `schwab-api.perform_request()`.
+- **Automatic Token Management**: Handles access token renewals `schwab-api.update_tokens_automatically()`.
+- **Real-Time Data Streaming**: Facilitates streaming via websockets `schwab-api.stream.start_manual()`.
+- **Automated Stream Management**: Automates the start and stop of data streams `schwab-api.stream.start_automatically()`.
 
 ## Additional Features (TBD)
 - **Refresh Token Automation**: Pending Schwab's API enhancements.
