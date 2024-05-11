@@ -7,7 +7,7 @@ Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this wor
 
 Before you can use this wrapper, ensure you have a Schwab developer account, which you can obtain [here](https://beta-developer.schwab.com/).
 
-For community support and discussions, join our [Pythonic Discord group](https://discord.gg/6XMYKEFr).
+For community support and discussions, join our [Pythonic Schwab API Discord group](https://discord.gg/6XMYKEFr).
 
 ## Quick Setup
 1. **Create a Schwab Developer App**: Register a new application with a callback URL set to "https://127.0.0.1". Ensure the app status changes to "Ready for use", as "Approved - Pending" status means it has not yet been approved.
