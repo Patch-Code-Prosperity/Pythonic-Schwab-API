@@ -1,11 +1,11 @@
 <p align="center"><img width="50%" src="https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API/assets/31261577/a8f48499-fac4-400a-afe1-72f0dadf9631"></p>
 
 # Pythonic-Schwab-API
-This is an unofficial Python wrapper for accessing the Schwab API, designed for developers who require a straightforward and efficient method to interact with financial data and trading operations.
+This is an unofficial Python wrapper for accessing the individual [Schwab API](), designed for developers who require a straightforward and efficient method to interact with financial data and trading operations.
 
-Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this work. This is a blatant rip-off of his work formatted in a more pythonic way. We started as a fork but felt this would likely end up going in a whole different direction as far as our intended purpose and scope. Thank you, Tyler, for your work.
+Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this work. This is a blatant rip-off of his work formatted in a more pythonic way. We started as a fork but felt this would likely end up going in a whole different direction as far as our intended purpose and scope. Thank you, Tyler, for your work. We will continue to steal his work and publish it as our own and hope he does the same if it is ever advantageous for him to return the favor.
 
-Before you can use this wrapper, ensure you have a Schwab developer account, which you can obtain [here](https://beta-developer.schwab.com/).
+Before you can use this wrapper, ensure you have a [Schwab developer account](https://beta-developer.schwab.com/).
 
 For community support and discussions, join our [Pythonic Schwab API Discord group](https://discord.gg/6XMYKEFr).
 
