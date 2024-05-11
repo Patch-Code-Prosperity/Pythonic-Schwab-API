@@ -40,9 +40,7 @@ This Python client simplifies interactions with the Schwab API by providing a us
 - **`terminal.py`**: Enhances terminal output with color-coded messages and supports additional terminal operations.
 
 ## Special Thanks
-Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this work. This is a blatant rip-off of his work formatted in a more pythonic way. We started as a fork but felt this would likely end up going in a whole different direction as far as our intended purpose and scope. Thank you, Tyler, for your work. We will continue to steal his work and publish it as our own and hope he does the same if it is ever advantageous for him to return the favor.
-
-View his original [repo](https://github.com/tylerebowers/Schwab-API-Python) and join his [discord](https://discord.gg/m7SSjr9rs9)
+Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this work. This is a blatant rip-off of [his work](https://github.com/tylerebowers/Schwab-API-Python) formatted in a more pythonic way. We started as a fork but felt this would likely end up going in a whole different direction as far as our intended purpose and scope. Thank you, Tyler, for your work. We will continue to steal his work and publish it as our own and hope he does the same if it is ever advantageous for him to return the favor.
 
 ## License (MIT)
 This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall the authors or copyright holders be responsible for any claim, damages, or other liabilities, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
