@@ -3,7 +3,7 @@
 # Pythonic-Schwab-API
 This is an unofficial Python wrapper for accessing the individual [Schwab API](), designed for developers who require a straightforward and efficient method to interact with financial data and trading operations.
 
-Before you can use this wrapper, ensure you have a [Schwab developer account](https://beta-developer.schwab.com/).
+You will need a [Schwab developer account](https://beta-developer.schwab.com/) before you can use this wrapper.
 
 For community support and discussions, join our [Pythonic Schwab API Discord group](https://discord.gg/6XMYKEFr).
 
