@@ -3,8 +3,6 @@
 # Pythonic-Schwab-API
 This is an unofficial Python wrapper for accessing the individual [Schwab API](), designed for developers who require a straightforward and efficient method to interact with financial data and trading operations.
 
-Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this work. This is a blatant rip-off of his work formatted in a more pythonic way. We started as a fork but felt this would likely end up going in a whole different direction as far as our intended purpose and scope. Thank you, Tyler, for your work. We will continue to steal his work and publish it as our own and hope he does the same if it is ever advantageous for him to return the favor.
-
 Before you can use this wrapper, ensure you have a [Schwab developer account](https://beta-developer.schwab.com/).
 
 For community support and discussions, join our [Pythonic Schwab API Discord group](https://discord.gg/6XMYKEFr).
@@ -40,6 +38,9 @@ This Python client simplifies interactions with the Schwab API by providing a us
 - **`schwab-api.py`**: Manages API interactions, token lifecycle, and request handling.
 - **`stream.py`**: Handles web socket connections for live data feeds.
 - **`terminal.py`**: Enhances terminal output with color-coded messages and supports additional terminal operations.
+
+## Special Thanks
+Credit to [Tyler Bowers](https://github.com/tylerebowers) for inspiring this work. This is a blatant rip-off of his work formatted in a more pythonic way. We started as a fork but felt this would likely end up going in a whole different direction as far as our intended purpose and scope. Thank you, Tyler, for your work. We will continue to steal his work and publish it as our own and hope he does the same if it is ever advantageous for him to return the favor.
 
 ## License (MIT)
 This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall the authors or copyright holders be responsible for any claim, damages, or other liabilities, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
