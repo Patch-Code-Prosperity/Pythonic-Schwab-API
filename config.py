@@ -4,6 +4,7 @@
 API_BASE_URL = "https://api.schwabapi.com"
 TRADER_BASE_URL = f"{API_BASE_URL}/trader/v1"
 MARKET_DATA_BASE_URL = f"{API_BASE_URL}/marketdata/v1"
+ORDER_BASE_URL = f"{API_BASE_URL}/accounts"
 
 # Potential other configuration settings
 REQUEST_TIMEOUT = 30  # Timeout for API requests in seconds
