@@ -51,7 +51,7 @@ def main():
     # Get user preferences for an account
     print(accounts_api.get_user_preferences('account_hash').json())
 
-    # Market data related requests
+    # Market-data-related requests
     quotes = market_data_api.Quotes(market_data_api)
     options = market_data_api.Options(market_data_api)
     price_history = market_data_api.PriceHistory(market_data_api)
@@ -84,5 +84,5 @@ def main():
     print(instruments.by_cusip("037833100").json())  # 037833100 = AAPL
 
 if __name__ == '__main__':
-    print("Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/tylerebowers/Schwab-API-Python")
+    print("Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
     main()
