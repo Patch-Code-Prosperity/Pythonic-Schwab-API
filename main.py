@@ -1,22 +1,30 @@
-from modules import api, stream
 from datetime import datetime, timedelta
+from api_client import APIClient
+from accounts import Accounts
+from orders import Orders
+from market_data import MarketData
 
 def main():
+    client = APIClient()  # Initialize the API client
+    accounts_api = Accounts(client)
+    orders_api = Orders(client)
+    market_data_api = MarketData(client)
+
     # Get account numbers for linked accounts
-    print(api.accounts.get_account_numbers().json())
+    print(accounts_api.get_account_numbers().json())
 
     # Get positions for linked accounts
-    print(api.accounts.get_all_accounts().json())
+    print(accounts_api.get_all_accounts().json())
 
     # Get specific account positions
-    print(api.accounts.get_account(fields="positions").json())
+    print(accounts_api.get_account(fields="positions").json())
 
     # Get up to 3000 orders for an account for the past week
-    print(api.orders.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
+    print(orders_api.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
 
-    # Place an order (uncomment to test)
+    # Example to place an order (commented out for safety)
     """
-    order = {
+    order_details = {
         "orderType": "LIMIT", 
         "session": "NORMAL", 
         "duration": "DAY", 
@@ -26,64 +34,55 @@ def main():
             {"instruction": "BUY", "quantity": 1, "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}
         ]
     }
-    response = api.orders.place_order(order)
-    print(f"Place order response: {response}")
-    order_id = response.headers.get('location', '/').split('/')[-1]
-    print(f"OrderID: {order_id}")
+    order_response = orders_api.place_order('account_hash', order_details)
+    print(f"Place order response: {order_response.json()}")
+    order_id = order_response.headers.get('location', '/').split('/')[-1]
+    """
 
     # Get a specific order
-    print(api.orders.get_order(order_id).json())
-
-    # Cancel specific order
-    print(api.orders.cancel_order(order_id))
-    """
-
-    # Replace specific order
-    # api.orders.replace_order(order_id, order)
+    # print(orders_api.get_order('account_hash', order_id).json())
 
     # Get up to 3000 orders for all accounts for the past week
-    print(api.orders.get_all_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
+    print(orders_api.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
 
     # Get all transactions for an account
-    print(api.transactions.get_transactions(datetime.now() - timedelta(days=7), datetime.now(), "TRADE").json())
+    print(accounts_api.get_account_transactions('account_hash', datetime.now() - timedelta(days=7), datetime.now(), "TRADE").json())
 
     # Get user preferences for an account
-    print(api.user_preference.get_user_preference().json())
+    print(accounts_api.get_user_preferences('account_hash').json())
+
+    # Market data related requests
+    quotes = market_data_api.Quotes(market_data_api)
+    options = market_data_api.Options(market_data_api)
+    price_history = market_data_api.PriceHistory(market_data_api)
+    movers = market_data_api.Movers(market_data_api)
+    market_hours = market_data_api.MarketHours(market_data_api)
+    instruments = market_data_api.Instruments(market_data_api)
 
     # Get a list of quotes
-    print(api.quotes.get_list(["AAPL", "AMD"]).json())
+    print(quotes.get_list(["AAPL", "AMD"]).json())
 
     # Get a single quote
-    print(api.quotes.get_single("INTC").json())
+    print(quotes.get_single("INTC").json())
 
     # Get an option expiration chain
-    print(api.options.get_expiration_chain("AAPL").json())
+    print(options.get_chains("AAPL").json())
 
     # Get movers for an index
-    print(api.movers.get_movers("$DJI").json())
+    print(movers.get_movers("$DJI").json())
 
     # Get market hours for symbols
-    print(api.market_hours.get_by_markets("equity,option").json())
+    print(market_hours.by_markets("equity,option").json())
 
     # Get market hours for a market
-    print(api.market_hours.get_by_market("equity").json())
+    print(market_hours.by_market("equity").json())
 
     # Get instruments for a symbol
-    print(api.instruments.get_by_symbol("AAPL", "search").json())
+    print(instruments.by_symbol("AAPL", "search").json())
 
     # Get instruments for a CUSIP
-    print(api.instruments.get_by_cusip("037833100").json())  # 037833100 = AAPL
-
-    # Send a subscription request to the stream (uncomment if you start the stream below)
-    """
-    stream.send(stream.utilities.basic_request("CHART_EQUITY", "SUBS", parameters={"keys": "AMD,INTC", "fields": "0,1,2,3,4,5,6,7,8"}))
-    # Stop the stream after 30s
-    stream.stop()
-    """
+    print(instruments.by_cusip("037833100").json())  # 037833100 = AAPL
 
 if __name__ == '__main__':
     print("Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/tylerebowers/Schwab-API-Python")
-    api.initialize()  # checks tokens & loads variables
-    api.update_tokens_automatically()  # starts thread to update tokens automatically
-    # stream.start_manual()  # start the stream manually
-    main()  # call the user code above
+    main()
