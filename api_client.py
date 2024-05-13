@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from config import APIConfig
 
+
 class APIClient:
     def __init__(self):
         self.session = requests.Session()
@@ -12,7 +13,7 @@ class APIClient:
         if not self.validate_credentials():
             logging.error("Invalid or missing credentials. Please check your configuration.")
             exit(1)
-        
+
         self.token_info = self.load_token() or self.authenticate()
 
     def setup_logging(self):

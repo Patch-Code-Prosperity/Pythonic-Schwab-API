@@ -1,16 +1,18 @@
-from config import TRADER_BASE_URL
+import datetime
 import logging
+
 
 class Accounts:
     def __init__(self, client):
         self.client = client
         self.logger = logging.getLogger(__name__)
-        self.base_url = TRADER_BASE_URL
+        self.base_url = client.config.TRADER_BASE_URL
 
     def get_account_numbers(self):
         """Retrieve account numbers associated with the user's profile."""
         try:
-            return self.client.get(f'{self.base_url}/accountNumbers')
+            response = self.client.get(f'{self.base_url}/accountNumbers')
+            return response.json()
         except Exception as e:
             self.logger.error(f"Failed to get account numbers: {e}")
             return None
