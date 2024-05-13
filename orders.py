@@ -1,7 +1,7 @@
 class Orders:
     def __init__(self, client):
         self.client = client
-        self.base_url = client.config.ORDER_BASE_URL
+        self.base_url = client.config.ORDERS_BASE_URL
 
     def get_orders(self, account_hash, max_results=100, from_entered_time=None, to_entered_time=None, status=None):
         """Retrieve a list of orders for a specified account."""
@@ -12,7 +12,7 @@ class Orders:
             'status': status
         }
         endpoint = f"{self.base_url}/{account_hash}/orders"
-        return self.client.get(endpoint, params=params)
+        return self.client.make_request(endpoint, params=params)
 
     def place_order(self, account_hash, order_details):
         """Place a new order for an account."""
@@ -22,7 +22,7 @@ class Orders:
     def get_order(self, account_hash, order_id):
         """Retrieve details for a specific order."""
         endpoint = f"{self.base_url}/{account_hash}/orders/{order_id}"
-        return self.client.get(endpoint)
+        return self.client.make_request(endpoint)
 
     def cancel_order(self, account_hash, order_id):
         """Cancel a specific order."""

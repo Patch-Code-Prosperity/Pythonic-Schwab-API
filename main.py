@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from api_client import APIClient
 from accounts import Accounts
+from market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
 from orders import Orders
 
 
@@ -10,13 +11,16 @@ def main():
     orders_api = Orders(client)
 
     # Get account numbers for linked accounts
-    print(accounts_api.get_account_numbers())
+    # print(accounts_api.get_account_numbers())  # working
 
     # Get positions for linked accounts
-    print(accounts_api.get_all_accounts().json())
+    # print(accounts_api.get_all_accounts())  # working
+
+    sample_account = client.account_numbers[0]
+    account_hash = sample_account['accountHash']
 
     # Get specific account positions
-    print(accounts_api.get_account(fields="positions").json())
+    # print(accounts_api.get_account(fields="positions"))
 
     # Get up to 3000 orders for an account for the past week
     print(orders_api.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
@@ -42,22 +46,19 @@ def main():
     # print(orders_api.get_order('account_hash', order_id).json())
 
     # Get up to 3000 orders for all accounts for the past week
-    print(orders_api.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
+    print(orders_api.get_orders(account_hash=account_hash, max_results=3000, from_entered_time=datetime.now() - timedelta(days=7), to_entered_time=datetime.now()))
 
     # Get all transactions for an account
     print(accounts_api.get_account_transactions('account_hash', datetime.now() - timedelta(days=7), datetime.now(),
                                                 "TRADE").json())
 
-    # Get user preferences for an account
-    print(accounts_api.get_user_preferences('account_hash').json())
-
     # Market-data-related requests
-    quotes = market_data_api.Quotes(market_data_api)
-    options = market_data_api.Options(market_data_api)
-    price_history = market_data_api.PriceHistory(market_data_api)
-    movers = market_data_api.Movers(market_data_api)
-    market_hours = market_data_api.MarketHours(market_data_api)
-    instruments = market_data_api.Instruments(market_data_api)
+    quotes = Quotes(client)
+    options = Options(client)
+    price_history = PriceHistory(client)
+    movers = Movers(client)
+    market_hours = MarketHours(client)
+    instruments = Instruments(client)
 
     # Get a list of quotes
     print(quotes.get_list(["AAPL", "AMD"]).json())

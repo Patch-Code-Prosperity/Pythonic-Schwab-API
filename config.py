@@ -7,8 +7,9 @@ load_dotenv()
 class APIConfig:
     API_BASE_URL = "https://api.schwabapi.com"
     TRADER_BASE_URL = f"{API_BASE_URL}/trader/v1"
+    ACCOUNTS_BASE_URL = f"{TRADER_BASE_URL}/accounts"
     MARKET_DATA_BASE_URL = f"{API_BASE_URL}/marketdata/v1"
-    ORDER_BASE_URL = f"{API_BASE_URL}/accounts"
+    ORDERS_BASE_URL = ACCOUNTS_BASE_URL
     REQUEST_TIMEOUT = 30  # Timeout for API requests in seconds
     RETRY_STRATEGY = {
         'total': 3,  # Total number of retries to allow
