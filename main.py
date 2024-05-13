@@ -3,6 +3,14 @@ from api_client import APIClient
 from accounts import Accounts
 from market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
 from orders import Orders
+from stream_client import StreamClient
+from asyncio import get_event_loop
+
+
+async def main_stream():
+    client = APIClient()  # Initialize the API client
+    stream_client = StreamClient(client)
+    await stream_client.start()
 
 
 def main():
@@ -86,6 +94,8 @@ def main():
 
 
 if __name__ == '__main__':
-    print(
-        "Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
-    main()
+    print("Welcome to the unofficial Schwab API interface!\n"
+          "GitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
+    loop = get_event_loop()
+    loop.run_until_complete(main_stream())
+    # main()
