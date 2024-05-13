@@ -1,9 +1,7 @@
-from config import ORDER_BASE_URL
-
 class Orders:
     def __init__(self, client):
         self.client = client
-        self.base_url = ORDER_BASE_URL
+        self.base_url = client.config.ORDER_BASE_URL
 
     def get_orders(self, account_hash, max_results=100, from_entered_time=None, to_entered_time=None, status=None):
         """Retrieve a list of orders for a specified account."""

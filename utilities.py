@@ -1,10 +1,7 @@
-# utilities.py
-
-import datetime
-
 def clean_params(params):
     """Remove None values from a dictionary of parameters."""
     return {k: v for k, v in params.items() if v is not None}
+
 
 def convert_time(dt=None, format_type="8601"):
     """Convert datetime objects into a string format according to a specified type."""
@@ -18,6 +15,7 @@ def convert_time(dt=None, format_type="8601"):
     }
     formatter = formats.get(format_type, str)
     return formatter(dt)
+
 
 def format_list(items):
     """Convert a list of items into a comma-separated string or return single item as string."""

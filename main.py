@@ -2,16 +2,15 @@ from datetime import datetime, timedelta
 from api_client import APIClient
 from accounts import Accounts
 from orders import Orders
-from market_data import MarketData
+
 
 def main():
     client = APIClient()  # Initialize the API client
     accounts_api = Accounts(client)
     orders_api = Orders(client)
-    market_data_api = MarketData(client)
 
     # Get account numbers for linked accounts
-    print(accounts_api.get_account_numbers().json())
+    print(accounts_api.get_account_numbers())
 
     # Get positions for linked accounts
     print(accounts_api.get_all_accounts().json())
@@ -46,7 +45,8 @@ def main():
     print(orders_api.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
 
     # Get all transactions for an account
-    print(accounts_api.get_account_transactions('account_hash', datetime.now() - timedelta(days=7), datetime.now(), "TRADE").json())
+    print(accounts_api.get_account_transactions('account_hash', datetime.now() - timedelta(days=7), datetime.now(),
+                                                "TRADE").json())
 
     # Get user preferences for an account
     print(accounts_api.get_user_preferences('account_hash').json())
@@ -83,6 +83,8 @@ def main():
     # Get instruments for a CUSIP
     print(instruments.by_cusip("037833100").json())  # 037833100 = AAPL
 
+
 if __name__ == '__main__':
-    print("Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
+    print(
+        "Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
     main()
