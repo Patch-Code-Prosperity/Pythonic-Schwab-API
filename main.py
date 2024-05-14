@@ -1,9 +1,38 @@
+import asyncio
 from datetime import datetime, timedelta
 from api_client import APIClient
 from accounts import Accounts
 from market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
 from orders import Orders
+from stream_client import StreamClient
+from asyncio import get_event_loop
+import stream_utilities
 
+
+async def main_stream():
+    client = APIClient()  # Initialize the API client
+    stream_client = StreamClient(client)
+    await stream_client.start()  # Start and connect
+
+    while stream_client.active:
+        # Construct and send a subscription request
+        request = stream_utilities.basic_request(
+            "LEVELONE_EQUITIES",
+            request_id=stream_client.request_id,
+            command="SUBS",
+            customer_id=stream_client.streamer_info.get("schwabClientCustomerId"),
+            correl_id=stream_client.streamer_info.get("schwabClientCorrelId"),
+            parameters={
+                "keys": "TSLA,AMZN,AAPL,NFLX,BABA",
+                "fields": "0,1,2,3,4,5,8,9,12,13,15,24,28,29,30,31,48"
+            }
+        )
+        await stream_client.send(request)
+        message = await stream_client.receive()
+        print(f"Received: {message}")
+        await asyncio.sleep(1)  # Delay between messages
+
+    stream_client.stop()
 
 def main():
     client = APIClient()  # Initialize the API client
@@ -86,6 +115,8 @@ def main():
 
 
 if __name__ == '__main__':
-    print(
-        "Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
-    main()
+    print("Welcome to the unofficial Schwab API interface!\n"
+          "GitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
+    loop = get_event_loop()
+    loop.run_until_complete(main_stream())
+    # main()

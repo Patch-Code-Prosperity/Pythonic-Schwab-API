@@ -67,9 +67,8 @@ class APIClient:
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         response = self.session.post(f"{self.config.API_BASE_URL}/v1/oauth/token", headers=headers, data=data)
-        if response.ok:
+        if response.status_code == 200:
             self.save_token(response.json())
-            self.load_token()
             self.logger.info("Tokens successfully updated.")
             return True
         else:
@@ -86,7 +85,7 @@ class APIClient:
         if not self.post_token_request(data):
             self.logger.error("Failed to refresh access token.")
             return False
-
+        self.token_info = self.load_token()
         return self.validate_token()
 
     def save_token(self, token_data):
@@ -106,11 +105,17 @@ class APIClient:
             self.logger.warning(f"Loading token failed: {e}")
         return None
 
-    def validate_token(self):
+    def validate_token(self, force=False):
         """ Validate the current token's validity. """
+        print(self.token_info['expires_at'])
+        print(datetime.now())
+        print(datetime.fromisoformat(self.token_info['expires_at']))
+        print(datetime.now() < datetime.fromisoformat(self.token_info['expires_at']))
         if self.token_info and datetime.now() < datetime.fromisoformat(self.token_info['expires_at']):
+            print(f"Token expires in {datetime.fromisoformat(self.token_info['expires_at']) - datetime.now()} seconds")
             return True
-        else:
+        elif force:
+            print("Token expired or invalid.")
             # get AAPL to validate token
             params = {'symbol': 'AAPL'}
             response = self.make_request(endpoint=f"{self.config.MARKET_DATA_BASE_URL}/chains", params=params, validating=True)
@@ -146,3 +151,11 @@ class APIClient:
             response = self.session.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response.json()
+
+    def get_user_preferences(self):
+        """Retrieve user preferences."""
+        try:
+            return self.make_request(f'{self.config.TRADER_BASE_URL}/userPreference')
+        except Exception as e:
+            self.logger.error(f"Failed to get user preferences: {e}")
+            return None

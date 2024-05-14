@@ -15,7 +15,7 @@ class MultiTerminal(threading.Thread):
         self.textColor = textColor
         self.allowClosing = allowClosing
         self.ignoreClosedPrints = ignoreClosedPrints
-        self.isOpen = False
+        self.is_open = False
         self.start()
 
     def run(self):
@@ -25,16 +25,16 @@ class MultiTerminal(threading.Thread):
         self.text_box = tk.Text(self.root, height=self.height, width=self.width, font=self.font,
                                 bg=self.backgroundColor, fg=self.textColor, state='disabled')
         self.text_box.pack(side="left", fill="both", expand=True)
-        self.isOpen = True
+        self.is_open = True
         self.root.mainloop()
 
     def close(self):
-        if self.isOpen:
-            self.isOpen = False
+        if self.is_open:
+            self.is_open = False
             self.root.destroy()
 
     def print(self, text, end="\n"):
-        if not self.isOpen:
+        if not self.is_open:
             if not self.ignoreClosedPrints:
                 raise Exception(f"Terminal '{self.title}' is closed.")
             return
