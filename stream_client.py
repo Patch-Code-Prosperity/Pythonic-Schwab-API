@@ -103,7 +103,6 @@ class StreamClient:
         if "response" in message and any(
                 resp.get("code") == "0" for resp in message["response"]):  # Check if login is successful
             self.color_print.print("info", "Logged in successfully, sending subscription requests...")
-            await self.send_subscription_requests()
         else:
             self.color_print.print("info", f"Received: {message}")
 
