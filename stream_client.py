@@ -23,11 +23,13 @@ class StreamClient:
     async def start(self):
         response = self.client.get_user_preferences()
         if not response:
-            self.color_print.print("error", f"Failed to get streamer info: {response.status_code}")
+            self.color_print.print("error", f"Failed to get streamer info: {response.text}")
             exit(1)
         self.streamer_info = response['streamerInfo'][0]
         login = self._construct_login_message()
-
+        self.color_print.print("info", "Starting stream...")
+        self.color_print.print("info", f"Streamer info: {self.streamer_info}")
+        self.color_print.print("info", f"Login message: {login}")
         while True:
             try:
                 await self._connect_and_stream(login)
@@ -37,13 +39,15 @@ class StreamClient:
             except Exception as e:
                 self.color_print.print("error", f"{e}")
                 self._handle_stream_error(e)
-
+                
     def _construct_login_message(self):
         self.request_id += 1
         return basic_request("ADMIN", "LOGIN", self.request_id, {
             "Authorization": self.client.token_info.get("access_token"),
             "SchwabClientChannel": self.streamer_info.get("schwabClientChannel"),
-            "SchwabClientFunctionId": self.streamer_info.get("schwabClientFunctionId")
+            "SchwabClientFunctionId": self.streamer_info.get("schwabClientFunctionId"),
+            "SchwabClientCustomerId": self.streamer_info.get("schwabClientCustomerId"),
+            "SchwabClientCorrelId": self.streamer_info.get("schwabClientCorrelId")
         })
 
     async def _connect_and_stream(self, login):
@@ -71,15 +75,13 @@ class StreamClient:
             else:
                 self.terminal.print("[WARNING]: Connection lost to server, reconnecting...")
 
-    def send(self, listOfRequests):
-        async def _send(to_send):
-            await self.websocket.send(to_send)
+    async def send(self, listOfRequests):
 
         if not isinstance(listOfRequests, list):
             listOfRequests = [listOfRequests]
         if self.active:
             to_send = json.dumps({"requests": listOfRequests})
-            asyncio.run(_send(to_send))
+            await self.websocket.send(to_send)
         else:
             self.color_print.print("warning", "Stream is not active, nothing sent.")
 
