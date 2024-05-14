@@ -67,7 +67,7 @@ class APIClient:
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         response = self.session.post(f"{self.config.API_BASE_URL}/v1/oauth/token", headers=headers, data=data)
-        if response.ok:
+        if response.status_code == 200:
             self.save_token(response.json())
             self.logger.info("Tokens successfully updated.")
             return True

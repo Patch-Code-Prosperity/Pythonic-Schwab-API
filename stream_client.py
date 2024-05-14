@@ -11,59 +11,112 @@ from color_print import ColorPrint
 
 class StreamClient:
     def __init__(self, client: APIClient):
+        self.client = client
         self.websocket = None
         self.streamer_info = None
         self.start_timestamp = None
         self.terminal = MultiTerminal(title="Stream Output")
         self.color_print = ColorPrint()
         self.active = False
-        self.request_id = 0
-        self.client = client
+        self.login_successful = False
+        self.request_id = -1
 
     async def start(self):
         response = self.client.get_user_preferences()
-        if not response:
-            self.color_print.print("error", f"Failed to get streamer info: {response.text}")
+        if 'error' in response:  # Assuming error handling is done inside get_user_preferences
+            self.color_print.print("error", f"Failed to get streamer info: {response['error']}")
             exit(1)
         self.streamer_info = response['streamerInfo'][0]
         login = self._construct_login_message()
-        self.color_print.print("info", "Starting stream...")
-        self.color_print.print("info", f"Streamer info: {self.streamer_info}")
-        self.color_print.print("info", f"Login message: {login}")
-        while True:
-            try:
-                await self._connect_and_stream(login)
-            except websockets.exceptions.ConnectionClosedOK:
-                self.color_print.print("info", "Stream has closed.")
-                break
-            except Exception as e:
-                self.color_print.print("error", f"{e}")
-                self._handle_stream_error(e)
-                
+        await self.connect()
+        await self.send(login)
+
+    async def connect(self):
+        try:
+            self.websocket = await websockets.connect(self.streamer_info.get('streamerSocketUrl'))
+            self.active = True
+            self.color_print.print("info", "Connection established.")
+        except Exception as e:
+            self.color_print.print("error", f"Failed to connect: {e}")
+
+    async def send(self, message):
+        if not self.active:
+            await self.connect()
+        try:
+            await self.websocket.send(json.dumps(message))
+            self.color_print.print("info", f"Message sent: {json.dumps(message)}")
+            response = await self.websocket.recv()
+            await self.handle_response(response)
+        except Exception as e:
+            self.color_print.print("error", f"Failed to send message: {e}")
+
+    async def handle_response(self, message):
+        message = json.loads(message)
+        self.color_print.print("info", f"Received: {message}")
+        if "Login" in message.get('command', '') and message.get('content', {}).get('code') == 0:
+            self.login_successful = True
+            self.color_print.print("info", "Login successful.")
+
+    async def receive(self):
+        try:
+            return await self.websocket.recv()
+        except Exception as e:
+            self.color_print.print("error", f"Error receiving message: {e}")
+            return None
+
     def _construct_login_message(self):
+        # Increment request ID for each new request
         self.request_id += 1
-        return basic_request("ADMIN", "LOGIN", self.request_id, {
+
+        # Prepare the parameters dictionary specifically for the parameters that need to be nested under 'parameters'
+        parameters = {
             "Authorization": self.client.token_info.get("access_token"),
             "SchwabClientChannel": self.streamer_info.get("schwabClientChannel"),
-            "SchwabClientFunctionId": self.streamer_info.get("schwabClientFunctionId"),
-            "SchwabClientCustomerId": self.streamer_info.get("schwabClientCustomerId"),
-            "SchwabClientCorrelId": self.streamer_info.get("schwabClientCorrelId")
-        })
+            "SchwabClientFunctionId": self.streamer_info.get("schwabClientFunctionId")
+        }
+
+        # Call the basic_request function with customer ID and correlation ID at the top level of the request
+        return basic_request(
+            service="ADMIN",
+            request_id=self.request_id,
+            command="LOGIN",
+            customer_id=self.streamer_info.get("schwabClientCustomerId"),
+            correl_id=self.streamer_info.get("schwabClientCorrelId"),
+            parameters=parameters
+        )
 
     async def _connect_and_stream(self, login):
-        self.start_timestamp = datetime.now()
-        self.color_print.print("info", "Connecting to server...")
-        self.color_print.print("info", f"Start timestamp: {self.start_timestamp}")
-        self.color_print.print("info", f"Streamer socket URL: {self.streamer_info.get('streamerSocketUrl')}")
-        async with websockets.connect(self.streamer_info.get('streamerSocketUrl'),
-                                      ping_interval=None) as self.websocket:
-            self.terminal.print("[INFO]: Connecting to server...")
-            await self.websocket.send(json.dumps(login))
-            self.terminal.print(f"[Login]: {await self.websocket.recv()}")
-            self.active = True
-            while True:
-                received = await self.websocket.recv()
-                self.terminal.print(received)
+        try:
+            async with websockets.connect(self.streamer_info.get('streamerSocketUrl')) as websocket:
+                self.websocket = websocket
+                await websocket.send(json.dumps(login))
+                while True:
+                    message = await websocket.recv()
+                    await self.handle_message(json.loads(message))
+        except websockets.exceptions.ConnectionClosedOK:
+            self.color_print.print("info", "Stream has closed.")
+        except Exception as e:
+            self.color_print.print("error", f"{e}")
+            self._handle_stream_error(e)
+
+    async def handle_message(self, message):
+        if "response" in message and any(
+                resp.get("code") == "0" for resp in message["response"]):  # Check if login is successful
+            self.color_print.print("info", "Logged in successfully, sending subscription requests...")
+            await self.send_subscription_requests()
+        else:
+            self.color_print.print("info", f"Received: {message}")
+
+    async def reconnect(self):
+        self.terminal.print("[INFO]: Attempting to reconnect...")
+        try:
+            await asyncio.sleep(10)  # Wait before attempting to reconnect
+            login = self._construct_login_message()  # Reconstruct login info
+            await self._connect_and_stream(login)  # Attempt to reconnect
+            return True
+        except Exception as e:
+            self.terminal.print(f"Reconnect failed: {e}")
+            return False
 
     def _handle_stream_error(self, error):
         self.active = False
@@ -75,16 +128,8 @@ class StreamClient:
             else:
                 self.terminal.print("[WARNING]: Connection lost to server, reconnecting...")
 
-    async def send(self, listOfRequests):
-
-        if not isinstance(listOfRequests, list):
-            listOfRequests = [listOfRequests]
-        if self.active:
-            to_send = json.dumps({"requests": listOfRequests})
-            await self.websocket.send(to_send)
-        else:
-            self.color_print.print("warning", "Stream is not active, nothing sent.")
-
     def stop(self):
-        self.send(basic_request("ADMIN", "LOGOUT", self.request_id))
-        self.active = False
+        if self.active:
+            self.active = False
+            asyncio.create_task(self.websocket.close())
+            self.color_print.print("info", "Connection closed.")
