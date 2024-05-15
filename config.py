@@ -2,15 +2,24 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+SANDBOX = False
 
 
 class APIConfig:
-    API_BASE_URL = "https://api.schwabapi.com"
-    TRADER_BASE_URL = f"{API_BASE_URL}/trader/v1"
-    ACCOUNTS_BASE_URL = f"{TRADER_BASE_URL}/accounts"
-    MARKET_DATA_BASE_URL = f"{API_BASE_URL}/marketdata/v1"
-    ORDERS_BASE_URL = ACCOUNTS_BASE_URL
-    STREAMER_INFO_URL = f"{API_BASE_URL}/streamer-info"
+    if SANDBOX:
+        API_BASE_URL = "http://localhost:4020"
+        TRADER_BASE_URL = API_BASE_URL
+        ACCOUNTS_BASE_URL = f"{API_BASE_URL}/accounts"
+        MARKET_DATA_BASE_URL = f"{API_BASE_URL}/marketdata"
+        ORDERS_BASE_URL = ACCOUNTS_BASE_URL
+        STREAMER_INFO_URL = f"{API_BASE_URL}/streamer-info"
+    else:
+        API_BASE_URL = "https://api.schwabapi.com"
+        TRADER_BASE_URL = f"{API_BASE_URL}/trader/v1"
+        ACCOUNTS_BASE_URL = f"{TRADER_BASE_URL}/accounts"
+        MARKET_DATA_BASE_URL = f"{API_BASE_URL}/marketdata/v1"
+        ORDERS_BASE_URL = ACCOUNTS_BASE_URL
+        STREAMER_INFO_URL = f"{API_BASE_URL}/streamer-info"
     REQUEST_TIMEOUT = 30  # Timeout for API requests in seconds
     RETRY_STRATEGY = {
         'total': 3,  # Total number of retries to allow
