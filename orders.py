@@ -1,3 +1,6 @@
+from datetime import datetime, timezone, timedelta
+
+
 class Orders:
     def __init__(self, client):
         self.client = client
@@ -5,10 +8,14 @@ class Orders:
 
     def get_orders(self, account_hash, max_results=100, from_entered_time=None, to_entered_time=None, status=None):
         """Retrieve a list of orders for a specified account."""
+        if from_entered_time is None:
+            from_entered_time = (datetime.now(timezone.utc) - timedelta(days=364)).isoformat(timespec='seconds')
+        if to_entered_time is None:
+            to_entered_time = datetime.now(timezone.utc).isoformat(timespec='seconds')
         params = {
             'maxResults': max_results,
-            'fromEnteredTime': from_entered_time.isoformat() if from_entered_time else None,
-            'toEnteredTime': to_entered_time.isoformat() if to_entered_time else None,
+            'fromEnteredTime': from_entered_time,
+            'toEnteredTime': to_entered_time,
             'status': status
         }
         endpoint = f"{self.base_url}/{account_hash}/orders"
@@ -27,9 +34,9 @@ class Orders:
     def cancel_order(self, account_hash, order_id):
         """Cancel a specific order."""
         endpoint = f"{self.base_url}/{account_hash}/orders/{order_id}"
-        return self.client.delete(endpoint)
+        return self.client.make_request(endpoint, method='DELETE')
 
     def replace_order(self, account_hash, order_id, new_order_details):
         """Replace an existing order with new details."""
         endpoint = f"{self.base_url}/{account_hash}/orders/{order_id}"
-        return self.client.put(endpoint, data=new_order_details)
+        return self.client.make_request(endpoint, method='PUT', data=new_order_details)
