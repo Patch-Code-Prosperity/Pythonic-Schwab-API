@@ -10,7 +10,8 @@ import stream_utilities
 
 
 async def main_stream():
-    client = APIClient()  # Initialize the API client
+    initials="AB"
+    client = APIClient(initials=initials)  # Initialize the API client
     stream_client = StreamClient(client)
     await stream_client.start()  # Start and connect
 
@@ -36,7 +37,8 @@ async def main_stream():
 
 
 def main():
-    client = APIClient()  # Initialize the API client
+    initials="AB"
+    client = APIClient(initials=initials)  # Initialize the API client
     accounts_api = Accounts(client)
     orders_api = Orders(client)
 
