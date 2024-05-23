@@ -1,15 +1,3 @@
 requests>=2.25.1
 python-dotenv>=0.19.1
 websockets>=10.3
-pandas~=2.2.2
-tqdm~=4.66.4
-schwab_api~=0.4.0
-selenium~=4.20.0
-pyotp~=2.9.0
-robin_stocks~=3.0.6
-fennel_invest_api~=1.0.5
-public_invest_api~=1.0.4
-pytz~=2024.1
-webull~=0.6.1
-emoji~=2.11.1
-firstrade~=0.0.17
