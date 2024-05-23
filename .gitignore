@@ -2,3 +2,4 @@
 __pycache__/
 .env
 token_data.json
+custom
