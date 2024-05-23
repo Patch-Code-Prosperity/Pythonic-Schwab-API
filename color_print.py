@@ -15,6 +15,11 @@ class ColorPrint:
     def input(message):
         return input(f"{ColorPrint.COLORS['input']}{message}")
 
+    @staticmethod
+    def user_input(message):
+        return input(f"{ColorPrint.COLORS['user']}{message}")
+
+
 
 if __name__ == '__main__':
     ColorPrint.print('info', 'This is an informational message')

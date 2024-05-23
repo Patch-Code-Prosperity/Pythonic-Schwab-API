@@ -1,29 +1,68 @@
+import asyncio
 from datetime import datetime, timedelta
 from api_client import APIClient
 from accounts import Accounts
 from market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
 from orders import Orders
+from stream_client import StreamClient
+from asyncio import get_event_loop
+import stream_utilities
+
+
+async def main_stream():
+    initials="AB"
+    client = APIClient(initials=initials)  # Initialize the API client
+    stream_client = StreamClient(client)
+    await stream_client.start()  # Start and connect
+
+    while stream_client.active:
+        # Construct and send a subscription request
+        request = stream_utilities.basic_request(
+            "LEVELONE_EQUITIES",
+            request_id=stream_client.request_id,
+            command="SUBS",
+            customer_id=stream_client.streamer_info.get("schwabClientCustomerId"),
+            correl_id=stream_client.streamer_info.get("schwabClientCorrelId"),
+            parameters={
+                "keys": "TSLA,AMZN,AAPL,NFLX,BABA",
+                "fields": "0,1,2,3,4,5,8,9,12,13,15,24,28,29,30,31,48"
+            }
+        )
+        await stream_client.send(request)
+        message = await stream_client.receive()
+        print(f"Received: {message}")
+        await asyncio.sleep(1)  # Delay between messages
+
+    stream_client.stop()
 
 
 def main():
-    client = APIClient()  # Initialize the API client
+    initials="AB"
+    client = APIClient(initials=initials)  # Initialize the API client
     accounts_api = Accounts(client)
     orders_api = Orders(client)
 
     # Get account numbers for linked accounts
-    # print(accounts_api.get_account_numbers())  # working
+    client.account_numbers = accounts_api.get_account_numbers()  # working
+    print(client.account_numbers)
 
     # Get positions for linked accounts
-    # print(accounts_api.get_all_accounts())  # working
+    print(accounts_api.get_all_accounts())  # working
 
-    sample_account = client.account_numbers[0]
-    account_hash = sample_account['accountHash']
+    sample_account = client.account_numbers[0]  # working
+    print(sample_account)
+    account_hash = sample_account['hashValue']  # working
+    print(account_hash)
 
     # Get specific account positions
-    # print(accounts_api.get_account(fields="positions"))
+    print(accounts_api.get_account(account_hash=account_hash, fields="positions"))
 
     # Get up to 3000 orders for an account for the past week
-    print(orders_api.get_orders(3000, datetime.now() - timedelta(days=7), datetime.now()).json())
+    print(orders_api.get_orders(account_hash=account_hash,
+                                max_results=3000,
+                                from_entered_time=datetime.now() - timedelta(days=7),
+                                to_entered_time=datetime.now())
+          )
 
     # Example to place an order (commented out for safety)
     """
@@ -46,11 +85,16 @@ def main():
     # print(orders_api.get_order('account_hash', order_id).json())
 
     # Get up to 3000 orders for all accounts for the past week
-    print(orders_api.get_orders(account_hash=account_hash, max_results=3000, from_entered_time=datetime.now() - timedelta(days=7), to_entered_time=datetime.now()))
+    for account in client.account_numbers:
+        account_hash = account['hashValue']
+        print(orders_api.get_orders(account_hash=account_hash, max_results=3000, from_entered_time=datetime.now() - timedelta(days=7), to_entered_time=datetime.now()))
 
     # Get all transactions for an account
-    print(accounts_api.get_account_transactions('account_hash', datetime.now() - timedelta(days=7), datetime.now(),
-                                                "TRADE").json())
+    print(accounts_api.get_account_transactions(account_hash=account_hash,
+                                                start_date=datetime.now() - timedelta(days=7),
+                                                end_date=datetime.now(),
+                                                types="TRADE")
+          )
 
     # Market-data-related requests
     quotes = Quotes(client)
@@ -69,6 +113,9 @@ def main():
     # Get an option expiration chain
     print(options.get_chains("AAPL").json())
 
+    # Get price history for a symbol
+    print(price_history.by_symbol("AAPL", period_type="day", period=1, frequency_type="minute", frequency=5).json())
+
     # Get movers for an index
     print(movers.get_movers("$DJI").json())
 
@@ -86,6 +133,8 @@ def main():
 
 
 if __name__ == '__main__':
-    print(
-        "Welcome to the unofficial Schwab API interface!\nGitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
+    print("Welcome to the unofficial Schwab API interface!\n"
+          "GitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
+    # loop = get_event_loop()
+    # loop.run_until_complete(main_stream())
     main()

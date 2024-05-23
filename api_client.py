@@ -11,9 +11,10 @@ from color_print import ColorPrint
 
 
 class APIClient:
-    def __init__(self):
+    def __init__(self, initials):
+        self.initials = initials
         self.account_numbers = None
-        self.config = APIConfig
+        self.config = APIConfig(self.initials)
         self.session = requests.Session()
         self.setup_logging()
         self.token_info = self.load_token()
@@ -23,7 +24,7 @@ class APIClient:
             self.manual_authorization_flow()
 
     def setup_logging(self):
-        logging.basicConfig(**APIConfig.LOGGING_CONFIG)
+        logging.basicConfig(**self.config.LOGGING_CONFIG)
         self.logger = logging.getLogger(__name__)
 
     def ensure_valid_token(self):
@@ -42,7 +43,7 @@ class APIClient:
     def manual_authorization_flow(self):
         """ Handle the manual steps required to get the authorization code from the user. """
         self.logger.info("Starting manual authorization flow.")
-        auth_url = f"{APIConfig.API_BASE_URL}/v1/oauth/authorize?client_id={APIConfig.APP_KEY}&redirect_uri={APIConfig.CALLBACK_URL}&response_type=code"
+        auth_url = f"{self.config.API_BASE_URL}/v1/oauth/authorize?client_id={self.config.APP_KEY}&redirect_uri={self.config.CALLBACK_URL}&response_type=code"
         webbrowser.open(auth_url)
         self.logger.info(f"Please authorize the application by visiting: {auth_url}")
         response_url = ColorPrint.input(
@@ -67,9 +68,8 @@ class APIClient:
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         response = self.session.post(f"{self.config.API_BASE_URL}/v1/oauth/token", headers=headers, data=data)
-        if response.ok:
+        if response.status_code == 200:
             self.save_token(response.json())
-            self.load_token()
             self.logger.info("Tokens successfully updated.")
             return True
         else:
@@ -86,31 +86,37 @@ class APIClient:
         if not self.post_token_request(data):
             self.logger.error("Failed to refresh access token.")
             return False
-
+        self.token_info = self.load_token()
         return self.validate_token()
 
     def save_token(self, token_data):
         """ Save token data securely. """
         token_data['expires_at'] = (datetime.now() + timedelta(seconds=token_data['expires_in'])).isoformat()
-        with open('token_data.json', 'w') as f:
+        with open(f'schwab_token_data_{self.initials}.json', 'w') as f:
             json.dump(token_data, f)
         self.logger.info("Token data saved successfully.")
 
     def load_token(self):
         """ Load token data. """
         try:
-            with open('token_data.json', 'r') as f:
+            with open(f'schwab_token_data_{self.initials}.json', 'r') as f:
                 token_data = json.load(f)
                 return token_data
         except Exception as e:
             self.logger.warning(f"Loading token failed: {e}")
         return None
 
-    def validate_token(self):
-        """ Validate the current token's validity. """
+    def validate_token(self, force=False):
+        """ Validate the current token. """
+        # print(self.token_info['expires_at'])
+        # print(datetime.now())
+        # print(datetime.fromisoformat(self.token_info['expires_at']))
+        # print(datetime.now() < datetime.fromisoformat(self.token_info['expires_at']))
         if self.token_info and datetime.now() < datetime.fromisoformat(self.token_info['expires_at']):
+            print(f"Token expires in {datetime.fromisoformat(self.token_info['expires_at']) - datetime.now()} seconds")
             return True
-        else:
+        elif force:
+            print("Token expired or invalid.")
             # get AAPL to validate token
             params = {'symbol': 'AAPL'}
             response = self.make_request(endpoint=f"{self.config.MARKET_DATA_BASE_URL}/chains", params=params, validating=True)
@@ -146,3 +152,11 @@ class APIClient:
             response = self.session.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response.json()
+
+    def get_user_preferences(self):
+        """Retrieve user preferences."""
+        try:
+            return self.make_request(f'{self.config.TRADER_BASE_URL}/userPreference')
+        except Exception as e:
+            self.logger.error(f"Failed to get user preferences: {e}")
+            return None
