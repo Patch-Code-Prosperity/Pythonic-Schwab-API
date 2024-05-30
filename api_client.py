@@ -1,4 +1,5 @@
 import random
+import re
 from time import sleep
 import requests
 import webbrowser
@@ -85,7 +86,7 @@ class APIClient:
         }
         if not self.post_token_request(data):
             self.logger.error("Failed to refresh access token.")
-            return False
+            self.manual_authorization_flow()
         self.token_info = self.load_token()
         return self.validate_token()
 
@@ -119,7 +120,8 @@ class APIClient:
             print("Token expired or invalid.")
             # get AAPL to validate token
             params = {'symbol': 'AAPL'}
-            response = self.make_request(endpoint=f"{self.config.MARKET_DATA_BASE_URL}/chains", params=params, validating=True)
+            response = self.make_request(endpoint=f"{self.config.MARKET_DATA_BASE_URL}/chains", params=params,
+                                         validating=True)
             print(response)
             if response:
                 self.logger.info("Token validated successfully.")
@@ -129,29 +131,76 @@ class APIClient:
         return False
 
     def make_request(self, endpoint, method="GET", **kwargs):
+        """
+        Make authenticated HTTP requests.
+
+        Args:
+            endpoint (str): The API endpoint.
+            method (str, optional): The HTTP method. Defaults to "GET".
+            **kwargs: Additional parameters for the request.
+
+        Returns:
+            dict: The JSON response from the API if available, else None.
+
+        Raises:
+            HTTPError: If the request fails.
+        """
+        # Introduce a random delay to avoid hitting the server too quickly
         sleep(0.5 + random.randint(0, 1000) / 1000)
-        """ Make authenticated HTTP requests. """
+
+        # Validate the token if not in a validation process
         if 'validating' not in kwargs:
             if not self.validate_token():
                 self.logger.info("Token expired or invalid, re-authenticating.")
-                self.manual_authorization_flow()
+                self.refresh_access_token()
         kwargs.pop('validating', None)
+
+        # Construct the full URL if the base URL is not included
         if self.config.API_BASE_URL not in endpoint:
             url = f"{self.config.API_BASE_URL}{endpoint}"
         else:
             url = endpoint
-        print(f"Making request to {url} with method {method} and kwargs {kwargs} (validating already popped if present)")
+
+        self.logger.debug(f"Making request to {url} with method {method} and kwargs {kwargs}")
+
+        # Set the authorization headers
         headers = {'Authorization': f"Bearer {self.token_info['access_token']}"}
+
+        # Make the HTTP request
         response = self.session.request(method, url, headers=headers, **kwargs)
-        print(response.status_code)
-        print(response.text)
+
+        # Handle token expiration during the request
         if response.status_code == 401:
             self.logger.warning("Token expired during request. Refreshing token...")
-            self.manual_authorization_flow()
+            self.refresh_access_token()
             headers = {'Authorization': f"Bearer {self.token_info['access_token']}"}
             response = self.session.request(method, url, headers=headers, **kwargs)
+
+        # Log for non-200 responses
+        if response.status_code != 200:
+            order_pattern = r"https://api\.schwabapi\.com/trader/v1/accounts/.*/orders"
+            if response.status_code == 201 and re.match(order_pattern, url):
+                location = response.headers.get('location')
+                if location:
+                    order_id = location.split('/')[-1]
+                    self.logger.debug(f"Order placed successfully. Order ID: {order_id}")
+                    return {"order_id": order_id, "success": True}
+                else:
+                    self.logger.error("201 response without a location header.")
+                    return None
+
         response.raise_for_status()
-        return response.json()
+
+        # Check if response content is empty before parsing as JSON
+        if response.content:
+            try:
+                return response.json()
+            except json.JSONDecodeError as e:
+                self.logger.error(f"Error decoding JSON response: {e}")
+                raise requests.exceptions.JSONDecodeError(e.msg, e.doc, e.pos)
+        else:
+            self.logger.debug("Empty response content")
+            return None
 
     def get_user_preferences(self):
         """Retrieve user preferences."""

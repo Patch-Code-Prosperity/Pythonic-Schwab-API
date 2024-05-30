@@ -51,6 +51,9 @@ def actually_do_some_trading(orders_api, account_hash, valid_quotes):
 
 
 def find_trades_from_quotes(orders_api, quotes, account_hash):
+    if not quotes or len(quotes) == 0:
+        print("No quotes found.")
+        return
     # Convert quotes to DataFrame
     quotes_df = pd.DataFrame.from_dict(quotes, orient='index')
     quotes_df.index = quotes_df.index.map(urll.unquote)
@@ -60,6 +63,9 @@ def find_trades_from_quotes(orders_api, quotes, account_hash):
 
     # Filter out quotes with missing data
     quotes_df = quotes_df.dropna(subset=['askPrice', 'askSize', 'bidPrice', 'bidSize', 'lastPrice'])
+
+    if 'regular' not in quotes_df.columns:
+        return
 
     # Apply trading logic
     valid_quotes = quotes_df[
@@ -116,8 +122,8 @@ def sell_the_algo_buys(orders_api, account_hash, quotes_api):
 
 def check_cash_account(account_api, account_hash):
     account = account_api.get_account(account_hash=account_hash, fields="positions")
-    print(account)
-    cash_account = account['cash']
+    # print(account)
+    cash_account = account["securitiesAccount"]["type"] == "CASH"
     return cash_account
 
 
