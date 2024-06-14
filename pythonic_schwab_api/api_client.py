@@ -7,8 +7,9 @@ import base64
 import json
 from datetime import datetime, timedelta
 import logging
-from config import APIConfig
-from color_print import ColorPrint
+
+from pythonic_schwab_api.config import APIConfig
+from pythonic_schwab_api.color_print import ColorPrint
 
 
 class APIClient:

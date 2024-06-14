@@ -2,11 +2,21 @@ from datetime import datetime, timezone, timedelta
 
 
 class Orders:
+    """
+    Represents the functionality to interact with order-related endpoints of the Schwab API.
+
+    Provides methods to create order schemas, place, preview, replace, cancel, and retrieve orders for a specified account.
+
+    Attributes:
+        client: A configured client instance used to make API requests.
+        base_url: The base URL for the orders endpoint, derived from the client configuration.
+    """
     def __init__(self, client):
         self.client = client
         self.base_url = client.config.ORDERS_BASE_URL
 
-    def create_order_schema(self, symbol, side, quantity, order_type='MARKET', limit_price=None, time_in_force='DAY', session='NORMAL'):
+    def create_order_schema(self, symbol, side, quantity, order_type='MARKET',
+                            limit_price=None, time_in_force='DAY', session='NORMAL'):
         """Create a new order schema."""
         if order_type not in ['MARKET']:
             quantity = int(quantity)

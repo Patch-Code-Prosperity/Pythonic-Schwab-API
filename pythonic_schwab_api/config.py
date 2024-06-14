@@ -6,6 +6,12 @@ SANDBOX = False
 
 
 class APIConfig:
+    """
+    Initializes the APIConfig object with the provided initials.
+
+    Parameters:
+        initials (str): The initials used for configuration.
+    """
     def __init__(self, initials):
         self.initials = initials
         if SANDBOX:
@@ -27,7 +33,7 @@ class APIConfig:
             'total': 3,  # Total number of retries to allow
             'backoff_factor': 1  # Factor by which the delay between retries will increase
         }
-        self.TOKEN_REFRESH_THRESHOLD_SECONDS = 300  # Time in seconds before token expiration to attempt refresh
+        self.TOKEN_REFRESH_THRESHOLD_SECONDS = 300  # seconds before token expiration to attempt refresh
         self.DEBUG_MODE = False
         self.LOGGING_CONFIG = {
             'level': 'INFO',

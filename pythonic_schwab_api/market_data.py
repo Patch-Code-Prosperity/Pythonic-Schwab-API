@@ -1,3 +1,4 @@
+import datetime
 import urllib.parse as urll
 
 
@@ -56,11 +57,15 @@ class MarketHours:
         self.client = client
         self.base_url = f"{client.config.MARKET_DATA_BASE_URL}/markets"
 
-    def by_markets(self, markets, date):
+    def by_markets(self, markets, date=None):
+        if not date:
+            date = datetime.date.today().isoformat()
         params = {'markets': markets, 'date': date}
         return self.client.make_request(self.base_url, params=params)
 
-    def by_market(self, market_id, date):
+    def by_market(self, market_id, date=None):
+        if not date:
+            date = datetime.date.today().isoformat()
         params = {'date': date}
         return self.client.make_request(f"{self.base_url}/{market_id}", params=params)
 

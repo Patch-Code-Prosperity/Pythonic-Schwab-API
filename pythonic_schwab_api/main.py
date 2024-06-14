@@ -1,16 +1,24 @@
 import asyncio
 from datetime import datetime, timedelta
-from api_client import APIClient
-from accounts import Accounts
-from market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
-from orders import Orders
-from stream_client import StreamClient
 from asyncio import get_event_loop
-import stream_utilities
+
+from pythonic_schwab_api.api_client import APIClient
+from pythonic_schwab_api.accounts import Accounts
+from pythonic_schwab_api.market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
+from pythonic_schwab_api.orders import Orders
+from pythonic_schwab_api.stream_client import StreamClient
+import pythonic_schwab_api.stream_utilities as stream_utilities
 
 
 async def main_stream():
-    initials="AB"
+    """
+    Asynchronously runs the main stream functionality.
+    Creates an API client and a stream client, then starts and connects to the stream.
+    Constructs and sends a subscription request for LEVELONE_EQUITIES with specific fields.
+    Sends the request, waits for a message, prints the received message, and then delays for 1 second between messages.
+    Stops the stream client when the loop ends.
+    """
+    initials = "AB"
     client = APIClient(initials=initials)  # Initialize the API client
     stream_client = StreamClient(client)
     await stream_client.start()  # Start and connect
@@ -37,7 +45,11 @@ async def main_stream():
 
 
 def main():
-    initials="AB"
+    """
+    Main function that serves as the entry point for demonstrating various API operations such as
+    retrieving account numbers, positions, orders, and different market data related requests.
+    """
+    initials = "AB"
     client = APIClient(initials=initials)  # Initialize the API client
     accounts_api = Accounts(client)
     orders_api = Orders(client)
@@ -135,6 +147,6 @@ def main():
 if __name__ == '__main__':
     print("Welcome to the unofficial Schwab API interface!\n"
           "GitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
-    # loop = get_event_loop()
-    # loop.run_until_complete(main_stream())
     main()
+    loop = get_event_loop()
+    loop.run_until_complete(main_stream())

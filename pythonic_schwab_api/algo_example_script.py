@@ -9,11 +9,12 @@ import json
 from datetime import datetime, timedelta
 import pandas as pd
 import urllib.parse as urll
-from accounts import Accounts
-from api_client import APIClient
-from orders import Orders
-from market_data import Quotes
 from tqdm import tqdm
+
+from pythonic_schwab_api.accounts import Accounts
+from pythonic_schwab_api.api_client import APIClient
+from pythonic_schwab_api.orders import Orders
+from pythonic_schwab_api.market_data import Quotes
 
 
 def actually_do_some_trading(orders_api, account_hash, valid_quotes):
