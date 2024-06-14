@@ -1,3 +1,6 @@
+import urllib.parse as urll
+
+
 class Quotes:
     def __init__(self, client):
         self.client = client
@@ -13,6 +16,8 @@ class Quotes:
 
     def get_single(self, symbol_id, fields=None):
         params = {'fields': fields}
+        if urll.unquote(symbol_id) == symbol_id:
+            symbol_id = urll.quote(symbol_id)
         return self.client.make_request(f"{self.base_url}/{symbol_id}/quotes", params=params)
 
 
