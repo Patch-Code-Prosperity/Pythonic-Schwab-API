@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pythonic_schwab_api',
-    version='0.2.2',
+    version='0.2.3',
     packages=find_packages(),
     install_requires=["requests", "python-dotenv", "websockets"],
     author='Cfomodz',
@@ -15,7 +15,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     license='MIT License'
 )
 
