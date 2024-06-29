@@ -50,6 +50,8 @@ class MultiTerminal(threading.Thread):
         self.allow_closing = allowClosing
         self.ignore_closed_prints = ignoreClosedPrints
         self.is_open = False
+        self.root = None
+        self.text_box = None
         self.start()
 
     def run(self):

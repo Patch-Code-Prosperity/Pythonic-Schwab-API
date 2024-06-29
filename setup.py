@@ -11,7 +11,7 @@ setup(
     name='pythonic_schwab_api',
     version='0.2.4',
     packages=find_packages(),
-    install_requires=["requests", "python-dotenv", "websockets"],
+    install_requires=["requests", "python-dotenv", "websockets", "pandas", "tqdm"],
     author='Cfomodz',
     description='This is an unofficial interface to make using the Schwab API easier.',
     long_description=long_description,

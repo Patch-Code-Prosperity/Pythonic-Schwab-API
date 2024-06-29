@@ -11,6 +11,7 @@ import asyncio
 from datetime import datetime
 import sys
 import websockets
+
 from pythonic_schwab_api.multi_terminal import MultiTerminal
 from pythonic_schwab_api.api_client import APIClient
 from pythonic_schwab_api.stream_utilities import basic_request
