@@ -15,4 +15,4 @@ disable=too-few-public-methods
 
 [MESSAGES CONTROL]
 # Adjust severity of certain messages
-disable=R0902,W0719,R0902
+disable=R0902,W0719,R0902,W0718,R0913
