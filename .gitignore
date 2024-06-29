@@ -6,3 +6,5 @@ custom/
 tmp/*
 build/
 pythonic_schwab_api.egg-info/
+.vscode
+dist/

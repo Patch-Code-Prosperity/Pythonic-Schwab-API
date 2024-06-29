@@ -1,5 +1,11 @@
+"""
+This module provides utility functions for constructing request dictionaries
+for Schwab's streaming API.
+"""
+
 def basic_request(service, request_id, command, customer_id, correl_id, parameters=None):
-    """Constructs a basic request dictionary for streaming commands.
+    """
+    Constructs a basic request dictionary for streaming commands.
 
     Args:
         service (str): The service name, e.g., 'ADMIN'.

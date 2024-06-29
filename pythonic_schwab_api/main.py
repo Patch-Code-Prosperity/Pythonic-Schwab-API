@@ -1,3 +1,25 @@
+"""
+This module provides an interface to interact with the Schwab API.
+It includes functionalities for account management, order placement,
+market data retrieval, and streaming data.
+
+Classes:
+    APIClient: Handles API client initialization and authentication.
+    Accounts: Manages account-related operations.
+    Orders: Manages order-related operations.
+    Quotes: Retrieves market quotes.
+    Options: Retrieves options data.
+    PriceHistory: Retrieves historical price data.
+    Movers: Retrieves market movers data.
+    MarketHours: Retrieves market hours information.
+    Instruments: Retrieves instrument information.
+    StreamClient: Manages streaming data connections.
+
+Functions:
+    main_stream: Asynchronously runs the main stream functionality.
+    main: Entry point for demonstrating various API operations.
+"""
+
 import asyncio
 from datetime import datetime, timedelta
 from asyncio import get_event_loop
@@ -7,16 +29,17 @@ from pythonic_schwab_api.accounts import Accounts
 from pythonic_schwab_api.market_data import Quotes, Options, PriceHistory, Movers, MarketHours, Instruments
 from pythonic_schwab_api.orders import Orders
 from pythonic_schwab_api.stream_client import StreamClient
-import pythonic_schwab_api.stream_utilities as stream_utilities
+from pythonic_schwab_api import stream_utilities
 
 
 async def main_stream():
     """
     Asynchronously runs the main stream functionality.
-    Creates an API client and a stream client, then starts and connects to the stream.
-    Constructs and sends a subscription request for LEVELONE_EQUITIES with specific fields.
-    Sends the request, waits for a message, prints the received message, and then delays for 1 second between messages.
-    Stops the stream client when the loop ends.
+    Creates an API client and a stream client, then starts and connects
+    to the stream. Constructs and sends a subscription request for
+    LEVELONE_EQUITIES with specific fields. Sends the request, waits
+    for a message, prints the received message, and then delays for
+    1 second between messages. Stops the stream client when the loop ends.
     """
     initials = "AB"
     client = APIClient(initials=initials)  # Initialize the API client
@@ -46,8 +69,9 @@ async def main_stream():
 
 def main():
     """
-    Main function that serves as the entry point for demonstrating various API operations such as
-    retrieving account numbers, positions, orders, and different market data related requests.
+    Main function that serves as the entry point for demonstrating various
+    API operations such as retrieving account numbers, positions, orders,
+    and different market data related requests.
     """
     initials = "AB"
     client = APIClient(initials=initials)  # Initialize the API client
@@ -74,7 +98,7 @@ def main():
                                 max_results=3000,
                                 from_entered_time=datetime.now() - timedelta(days=7),
                                 to_entered_time=datetime.now())
-          )
+        )
 
     # Example to place an order (commented out for safety)
     """
@@ -85,7 +109,8 @@ def main():
         "orderStrategyType": "SINGLE", 
         "price": '10.00',
         "orderLegCollection": [
-            {"instruction": "BUY", "quantity": 1, "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}
+            {"instruction": "BUY", "quantity": 1, 
+            "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}
         ]
     }
     order_response = orders_api.place_order('account_hash', order_details)
@@ -99,14 +124,19 @@ def main():
     # Get up to 3000 orders for all accounts for the past week
     for account in client.account_numbers:
         account_hash = account['hashValue']
-        print(orders_api.get_orders(account_hash=account_hash, max_results=3000, from_entered_time=datetime.now() - timedelta(days=7), to_entered_time=datetime.now()))
+        print(orders_api.get_orders(
+            account_hash=account_hash, max_results=3000, 
+            from_entered_time=datetime.now() - timedelta(days=7), 
+            to_entered_time=datetime.now()))
 
     # Get all transactions for an account
-    print(accounts_api.get_account_transactions(account_hash=account_hash,
-                                                start_date=datetime.now() - timedelta(days=7),
-                                                end_date=datetime.now(),
-                                                types="TRADE")
-          )
+    print(
+        accounts_api.get_account_transactions(
+            account_hash=account_hash,
+            start_date=datetime.now() - timedelta(days=7),
+            end_date=datetime.now(),
+            types="TRADE")
+        )
 
     # Market-data-related requests
     quotes = Quotes(client)
@@ -126,7 +156,12 @@ def main():
     print(options.get_chains("AAPL").json())
 
     # Get price history for a symbol
-    print(price_history.by_symbol("AAPL", period_type="day", period=1, frequency_type="minute", frequency=5).json())
+    print(
+        price_history.by_symbol(
+            "AAPL", period_type="day", period=1, 
+            frequency_type="minute",
+            frequency=5).json()
+        )
 
     # Get movers for an index
     print(movers.get_movers("$DJI").json())
@@ -146,7 +181,8 @@ def main():
 
 if __name__ == '__main__':
     print("Welcome to the unofficial Schwab API interface!\n"
-          "GitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
+        "GitHub: https://github.com/Patch-Code-Prosperity/Pythonic-Schwab-API")
     main()
     loop = get_event_loop()
     loop.run_until_complete(main_stream())
+    loop.close()
