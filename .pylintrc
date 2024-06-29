@@ -6,18 +6,6 @@ max-line-length=120
 # Define good names that should not trigger warnings
 good-names=i, j, k, ex, Run, _
 
-[FORMAT]
-# Enable checks for PEP 8 formatting
-enable-extensions=PEP8Naming
-
-[VARIABLES]
-# Enforce naming conventions for variables
-dummy-variables-rgx=_?[a-z][a-z0-9]*$
-
-[DESIGN]
-# Set a minimum public methods threshold
-min-public-methods=2
-
 [CLASSES]
 # Disable too-few-public-methods check
 disable=too-few-public-methods
@@ -25,11 +13,3 @@ disable=too-few-public-methods
 [REPORTS]
 # Set the verbosity of the pylint output
 output-format=colorized
-
-[MESSAGES CONTROL]
-# Adjust severity of certain messages
-disable=I0011,C0103
-
-[REFACTORING]
-# Disable refactor checks
-disable=bad-continuation
