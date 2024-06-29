@@ -1,15 +1,14 @@
 [MASTER]
 # Specify the maximum line length
-max-line-length=120
+max-line-length=160
 
 [BASIC]
-# Define good names that should not trigger warnings
-good-names=i, j, k, ex, Run, _
-
-[CLASSES]
-# Disable too-few-public-methods check
-disable=too-few-public-methods
+good-names=f, e
 
 [REPORTS]
 # Set the verbosity of the pylint output
 output-format=colorized
+
+[MESSAGES CONTROL]
+# Adjust severity of certain messages
+disable=R0902,W0719,R0902
