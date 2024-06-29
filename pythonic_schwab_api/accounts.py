@@ -20,8 +20,7 @@ Usage example:
 """
 import datetime
 import logging
-import requests
-from requests.exceptions import RequestException, HTTPError, ConnectionError, Timeout
+from requests.exceptions import RequestException, HTTPError, Timeout
 
 
 class Accounts:

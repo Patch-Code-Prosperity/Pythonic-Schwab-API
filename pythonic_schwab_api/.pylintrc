@@ -1,0 +1,8 @@
+[BASIC]
+good-names=
+    f,
+    e,
+    logger,
+
+[FORMAT]
+max-line-length=120

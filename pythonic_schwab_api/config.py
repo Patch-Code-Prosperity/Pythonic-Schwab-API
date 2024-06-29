@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-sandbox = False
+SANDBOX = False
 
 
 class APIConfig:
@@ -14,7 +14,7 @@ class APIConfig:
     """
     def __init__(self, initials):
         self.initials = initials
-        if sandbox:
+        if SANDBOX:
             self.api_base_url = "http://localhost:4020"
             self.trader_base_url = self.api_base_url
             self.accounts_base_url = f"{self.api_base_url}/accounts"

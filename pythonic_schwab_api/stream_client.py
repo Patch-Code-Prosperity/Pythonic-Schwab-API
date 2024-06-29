@@ -76,6 +76,8 @@ class StreamClient:
             self.color_print.print("error", f"Invalid WebSocket URI: {e}")
         except websockets.exceptions.InvalidHandshake as e:
             self.color_print.print("error", f"Invalid WebSocket handshake: {e}")
+        except (websockets.exceptions.ConnectionClosed, websockets.exceptions.WebSocketException) as e:
+            self.color_print.print("error", f"WebSocket error: {e}")
         except Exception as e:
             self.color_print.print("error", f"Failed to connect: {e}")
 
@@ -97,6 +99,8 @@ class StreamClient:
             self.color_print.print("error", f"Connection closed: {e}")
         except json.JSONDecodeError as e:
             self.color_print.print("error", f"JSON decode error: {e}")
+        except (websockets.exceptions.WebSocketException, asyncio.TimeoutError) as e:
+            self.color_print.print("error", f"WebSocket error: {e}")
         except Exception as e:
             self.color_print.print("error", f"Failed to send message: {e}")
 
@@ -176,6 +180,8 @@ class StreamClient:
             self.color_print.print("error", f"Connection closed with error: {e}")
         except json.JSONDecodeError as e:
             self.color_print.print("error", f"JSON decode error: {e}")
+        except (websockets.exceptions.WebSocketException, asyncio.TimeoutError) as e:
+            self.color_print.print("error", f"WebSocket error: {e}")
         except Exception as e:
             self.color_print.print("error", f"{e}")
             self._handle_stream_error(e)
@@ -206,6 +212,9 @@ class StreamClient:
             login = self._construct_login_message()  # Reconstruct login info
             await self._connect_and_stream(login)  # Attempt to reconnect
             return True
+        except (websockets.exceptions.WebSocketException, asyncio.TimeoutError) as e:
+            self.terminal.print(f"Reconnect failed: {e}")
+            return False
         except Exception as e:
             self.terminal.print(f"Reconnect failed: {e}")
             return False
@@ -220,6 +229,8 @@ class StreamClient:
         self.active = False
         if isinstance(error, RuntimeError) and str(error) == "Streaming window has been closed":
             self.color_print.print("warning", "Streaming window has been closed.")
+        elif isinstance(error, (websockets.exceptions.WebSocketException, asyncio.TimeoutError)):
+            self.terminal.print("[WARNING]: Connection lost to server, reconnecting...")
         else:
             if (datetime.now() - self.start_timestamp).seconds < 70:
                 self.color_print.print("error", "Stream not alive for more than 1 minute, exiting...")

@@ -88,12 +88,11 @@ class APIClient:
     def post_token_request(self, data):
         """Generalized token request handling."""
         headers = {
-            'Authorization': 'Basic %s' % base64.b64encode(
-                f"{self.config.app_key}:{self.config.app_secret}".encode()).decode(),
+            'Authorization': f"Basic {base64.b64encode(f'{self.config.app_key}:{self.config.app_secret}'.encode()).decode()}",
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-        response = self.session.post(f"{self.config.api_base_url}/v1/oauth/token", 
-                                    headers=headers, 
+        response = self.session.post(f"{self.config.api_base_url}/v1/oauth/token",
+                                    headers=headers,
                                     data=data)
         if response.status_code == 200:
             self.save_token(response.json())

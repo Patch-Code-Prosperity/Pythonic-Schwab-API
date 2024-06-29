@@ -100,23 +100,21 @@ def main():
                                 to_entered_time=datetime.now())
         )
 
-    # Example to place an order (commented out for safety)
-    """
-    order_details = {
-        "orderType": "LIMIT", 
-        "session": "NORMAL", 
-        "duration": "DAY", 
-        "orderStrategyType": "SINGLE", 
-        "price": '10.00',
-        "orderLegCollection": [
-            {"instruction": "BUY", "quantity": 1, 
-            "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}
-        ]
-    }
-    order_response = orders_api.place_order('account_hash', order_details)
-    print(f"Place order response: {order_response.json()}")
-    order_id = order_response.headers.get('location', '/').split('/')[-1]
-    """
+    # # Example to place an order (commented out for safety)
+    # order_details = {
+    #     "orderType": "LIMIT", 
+    #     "session": "NORMAL", 
+    #     "duration": "DAY", 
+    #     "orderStrategyType": "SINGLE", 
+    #     "price": '10.00',
+    #     "orderLegCollection": [
+    #         {"instruction": "BUY", "quantity": 1, 
+    #         "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}
+    #     ]
+    # }
+    # order_response = orders_api.place_order('account_hash', order_details)
+    # print(f"Place order response: {order_response.json()}")
+    # order_id = order_response.headers.get('location', '/').split('/')[-1]
 
     # Get a specific order
     # print(orders_api.get_order('account_hash', order_id).json())
@@ -125,8 +123,8 @@ def main():
     for account in client.account_numbers:
         account_hash = account['hashValue']
         print(orders_api.get_orders(
-            account_hash=account_hash, max_results=3000, 
-            from_entered_time=datetime.now() - timedelta(days=7), 
+            account_hash=account_hash, max_results=3000,
+            from_entered_time=datetime.now() - timedelta(days=7),
             to_entered_time=datetime.now()))
 
     # Get all transactions for an account
