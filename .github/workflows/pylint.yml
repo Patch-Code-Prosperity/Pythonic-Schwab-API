@@ -25,4 +25,4 @@ jobs:
       env:
         PYTHONIOENCODING: utf-8
       run: |
-        pylint $(git ls-files '*.py')
+        pylint -d .pylintrc $(git ls-files '*.py')

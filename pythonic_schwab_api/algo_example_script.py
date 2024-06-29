@@ -188,7 +188,7 @@ def main():
         return
 
     # Get quotes
-    quotes = quotes_api.get_quotes(['AAPL', 'MSFT', 'GOOGL'])
+    quotes = quotes_api.get_list(['AAPL', 'MSFT', 'GOOGL'])
 
     # Find valid trades
     valid_quotes = find_trades_from_quotes(quotes)

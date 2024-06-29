@@ -102,13 +102,13 @@ def main():
 
     # # Example to place an order (commented out for safety)
     # order_details = {
-    #     "orderType": "LIMIT", 
-    #     "session": "NORMAL", 
-    #     "duration": "DAY", 
-    #     "orderStrategyType": "SINGLE", 
+    #     "orderType": "LIMIT",
+    #     "session": "NORMAL",
+    #     "duration": "DAY",
+    #     "orderStrategyType": "SINGLE",
     #     "price": '10.00',
     #     "orderLegCollection": [
-    #         {"instruction": "BUY", "quantity": 1, 
+    #         {"instruction": "BUY", "quantity": 1,
     #         "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}
     #     ]
     # }

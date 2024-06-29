@@ -1,3 +1,10 @@
+"""
+Configuration module for Schwab API.
+
+This module loads environment variables and sets up the API configuration
+based on whether the sandbox mode is enabled or not.
+"""
+
 import os
 from dotenv import load_dotenv
 
@@ -29,7 +36,7 @@ class APIConfig:
             self.orders_base_url = self.accounts_base_url
             self.streamer_info_url = f"{self.api_base_url}/streamer-info"
         self.request_timeout = 30  # Timeout for API requests in seconds
-        self. retry_strategy = {
+        self.retry_strategy = {
             'total': 3,  # Total number of retries to allow
             'backoff_factor': 1  # Factor by which the delay between retries will increase
         }
