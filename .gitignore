@@ -4,3 +4,7 @@ __pycache__/
 token_data.json
 custom/
 tmp/*
+build/
+pythonic_schwab_api.egg-info/
+.vscode
+dist/

@@ -1,0 +1,18 @@
+[MASTER]
+# Specify the maximum line length
+max-line-length=160
+
+[BASIC]
+good-names=f, e
+
+[REPORTS]
+# Set the verbosity of the pylint output
+output-format=colorized
+
+[CLASSES]
+# Disable too-few-public-methods check
+disable=too-few-public-methods
+
+[MESSAGES CONTROL]
+# Adjust severity of certain messages
+disable=R0902,W0719,R0902,W0718,R0913
