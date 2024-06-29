@@ -9,7 +9,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='pythonic_schwab_api',
-    version='0.3.6',
+    version='1.0.0',
     packages=find_packages(),
     install_requires=["requests", "python-dotenv", "websockets", "pandas", "tqdm"],
     author='Cfomodz',
