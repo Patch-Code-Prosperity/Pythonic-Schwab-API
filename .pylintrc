@@ -22,10 +22,6 @@ min-public-methods=2
 # Disable too-few-public-methods check
 disable=too-few-public-methods
 
-[LOGGING]
-# Set minimum logging level
-logging-format-style=%%(asctime)s %%(levelname)s %%(message)s
-
 [REPORTS]
 # Set the verbosity of the pylint output
 output-format=colorized
