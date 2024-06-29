@@ -5,7 +5,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='pythonic_schwab_api',
-    version='0.2.3',
+    version='0.2.4',
     packages=find_packages(),
     install_requires=["requests", "python-dotenv", "websockets"],
     author='Cfomodz',
