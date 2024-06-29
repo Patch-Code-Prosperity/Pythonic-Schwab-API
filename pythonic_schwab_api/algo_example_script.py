@@ -120,6 +120,14 @@ def find_trades_from_quotes(quotes):
 
 
 def sell_the_algo_buys(orders_api, account_hash, quotes_api):
+    """
+    Sells the stocks that were bought by the algorithm if certain conditions are met.
+
+    Args:
+        orders_api (Orders): The Orders API instance.
+        account_hash (str): The account hash.
+        quotes_api (Quotes): The Quotes API instance.
+    """
     # Check order statuses and handle new trades
     try:
         with open(f"algo_trades_{orders_api.client.config.initials}.json", "r", encoding="utf-8") as f:
@@ -165,6 +173,16 @@ def sell_the_algo_buys(orders_api, account_hash, quotes_api):
 
 
 def check_cash_account(account_api, account_hash):
+    """
+    Checks if the account is a cash account.
+
+    Args:
+        account_api (Accounts): The Accounts API instance.
+        account_hash (str): The account hash.
+
+    Returns:
+        bool: True if the account is a cash account, False otherwise.
+    """
     account = account_api.get_account(account_hash=account_hash, fields="positions")
     # print(account)
     cash_account = account["securitiesAccount"]["type"] == "CASH"
@@ -172,6 +190,9 @@ def check_cash_account(account_api, account_hash):
 
 
 def main():
+    """
+    Main function to run the trading algorithm.
+    """
     # Initialize client
     client = APIClient(initials=input("Enter your initials: "))
     accounts_api = Accounts(client)
